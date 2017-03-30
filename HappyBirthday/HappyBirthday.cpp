@@ -8,7 +8,7 @@
 ESPectro_Button button;
 
 #define SPEAKER_GPIO_NO 15
-#define MIC_IN_GPIO_NO  5 //2
+#define MIC_IN_GPIO_NO  5 //2 --> 2 is used by Neopixel, so I choose GPIO 5 for mic interrupt pin
 
 int melody[]= {196,196,220,196,262,247,196,196,220,196,294,262,196,196,392,330,262,247,220,349,349,330,262,294,262};
 int noteDurations[] = {8,8,4,4,4,2,8,8,4,4,4,2,8,8,4,4,4,4,3,8,8,4,4,4,2};
@@ -50,6 +50,7 @@ void playMusic(int thisNote) {
 }
 
 void stopMusic() {
+    // Ignore any stopping attempt before 3 seconds, optional though,
     if (millis() - startPlay < 3000) {
         return;
     }
@@ -66,10 +67,7 @@ void onButtonUp() {
 }
 
 void interrupted() {
-//    if (digitalRead(MIC_IN_GPIO_NO)) {
-        blowed = true;
-//        Serial.println("yo!");
-//    }
+    blowed = true;
 }
 
 void setup(){
@@ -89,7 +87,7 @@ void setup(){
 
     neopixel.Begin();
 
-    //gradient color
+    //Gradient color
     for(uint16_t idx = 0; idx < neopixel.PixelCount(); idx++) {
         float hue = 360.0f - ((idx * 1.0f / neopixel.PixelCount()) * 90);
         HslColor color = HslColor(hue / 360.0f, 1.0f, 0.5f);
@@ -116,7 +114,7 @@ void loop(){
 
         if (currentNoteIdx >= MELODY_COUNT) {
             delay(1000);
-            currentNoteIdx = 0; //replay
+            currentNoteIdx = 0; //delay 1s and replay
         }
     }
 }
